@@ -1,0 +1,22 @@
+.albums .card img {
+    transition: .3s;
+}
+.albums .card:hover img{
+    transform: translateY(-20px);
+    transition: .3s;
+}
+.albums .card {
+    transition: .3s;
+}
+.albums .card:hover {
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.458);
+    transition: .3s;
+}
+.albums .edit:hover {
+    color: rgb(103, 162, 250) !important;
+    transition: .3s;
+}
+.albums .delete:hover {
+    color: rgb(217, 94, 106) !important;
+    transition: .3s;
+}
