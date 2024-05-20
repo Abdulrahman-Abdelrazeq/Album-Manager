@@ -15,9 +15,9 @@ class AlbumController extends Controller
         return view('albums.index', compact('albums'));
     }
 
-    public function create()
+    public function show(Album $album)
     {
-        
+        return view('albums.show', compact('album'));
     }
 
     public function store(Request $request)
@@ -25,12 +25,6 @@ class AlbumController extends Controller
         $request->validate(['name' => 'required']);
         Auth::user()->albums()->create($request->all());
         return redirect()->route('albums.index');
-    }
-
-    public function edit(Album $album)
-    {
-        // $this->authorize('update', $album);
-        // return view('albums.edit', compact('album'));
     }
 
     public function update(Request $request, Album $album)
@@ -50,5 +44,36 @@ class AlbumController extends Controller
         }
         $album->delete();
         return redirect()->route('albums.index');
+    }
+
+
+
+
+    public function deleteAllPhotos(Request $request)
+    {
+        $album = Album::findOrFail($request->album_id);
+
+        foreach ($album->photos as $photo) {
+            $photoPath = public_path($photo->image_path);
+            if (file_exists($photoPath)) {
+                unlink($photoPath);
+            }
+            $photo->delete(); // Delete photo from database
+        }
+        $album->delete();
+        return response()->json(['success' => 'All photos deleted successfully.']);
+    }
+
+    public function movePhotos(Request $request, $albumId)
+    {
+        $album = Album::findOrFail($albumId);
+        $targetAlbum = Album::findOrFail($request->target_album);
+
+        foreach ($album->photos as $photo) {
+            $photo->album_id = $targetAlbum->id;
+            $photo->save();
+        }
+        $album->delete();
+        return redirect()->back();
     }
 }

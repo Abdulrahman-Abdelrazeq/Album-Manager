@@ -21,7 +21,12 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('/albums', AlbumController::class)->names('albums');
+
+    Route::post('albums/{album}/delete-photos', [AlbumController::class, 'deleteAllPhotos'])->name('albums.deleteAllPhotos');
+    Route::post('albums/{album}/move-photos', [AlbumController::class, 'movePhotos'])->name('albums.movePhotos');
+    
     Route::resource('albums.photos', PhotoController::class);
+
 });
 
 require __DIR__.'/auth.php';

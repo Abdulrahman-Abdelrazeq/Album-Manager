@@ -5,11 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
-// use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Album extends Model /* implements HasMedia */
+class Album extends Model
 {
-    use HasFactory/* , InteractsWithMedia */;
+    use HasFactory;
 
     protected $fillable = ['name', 'user_id'];
 
@@ -23,8 +22,4 @@ class Album extends Model /* implements HasMedia */
         return $this->hasMany(Photo::class);
     }
 
-    /* public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('photos');
-    } */
 }

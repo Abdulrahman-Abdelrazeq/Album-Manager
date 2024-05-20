@@ -45,6 +45,6 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('albums', absolute: false));
+        return redirect(route('albums.index', absolute: false));
     }
 }

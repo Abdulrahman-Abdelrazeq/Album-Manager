@@ -82,13 +82,14 @@
 
                                 <!-- Modal For Delete Album-->
                                 <div class="modal fade" id="delete-album-{{$album->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg">
                                         <div class="modal-content">
                                             <div class="modal-header">
                                             <h5 class="modal-title fs-3" id="exampleModalLabel">Delete Album</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
 
+                                            @if ($album->photos->count() == 0)
                                             <div class="modal-body">
                                                 <p>Are you sure?</p>
                                             </div>
@@ -100,9 +101,54 @@
                                                     <button type="submit" class="btn btn-danger">Yes</button>
                                                 </form>
                                             </div>
+                                            
+                                            @else
+                                            <div class="modal-body">
+                                                <p>This album contains photos. What would you like to do?</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-danger" onclick="deleteAllPhotos({{ $album->id }})">Delete Album and All Photos</button>
+                                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#movePhotosModal-{{ $album->id }}">Move Photos to Another Album</button>
+                                                
+                                            </div>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- Modal For Move Photos to Another Album -->
+                                <div class="modal fade" id="movePhotosModal-{{ $album->id }}" tabindex="-1" aria-labelledby="movePhotosLabel-{{ $album->id }}" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title fs-3" id="movePhotosLabel-{{ $album->id }}">Move Photos to Another Album</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+
+                                            <form action="{{ route('albums.movePhotos', $album->id) }}" method="POST">
+                                                <div class="modal-body">
+                                                    @csrf
+                                                    <div class="form-group">
+                                                        <label class="fs-4" for="target_album">Select Target Album</label>
+                                                        <select name="target_album" class="form-control" required>
+                                                            @foreach ($albums as $targetAlbum)
+                                                                @if ($targetAlbum->id != $album->id)
+                                                                    <option value="{{ $targetAlbum->id }}">{{ $targetAlbum->name }}</option>
+                                                                @endif
+                                                            @endforeach
+                                                        </select>
+                                                    </div>       
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <button type="submit" class="btn btn-primary">Move Photos and delete Album</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+
                             </div>
                         </div>
                     </div>
@@ -116,4 +162,24 @@
         </ul>
     </div>
 
+    <script>
+        function deleteAllPhotos(albumId) {
+            if (confirm("Are you sure you want to delete all photos in this album?")) {
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ route('albums.deleteAllPhotos', ':albumId') }}'.replace(':albumId', albumId),
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        album_id: albumId
+                    },
+                    success: function(response) {
+                        window.location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        alert("An error occurred while deleting the photos.");
+                    }
+                });
+            }
+        }
+    </script>
 </x-app-layout>
