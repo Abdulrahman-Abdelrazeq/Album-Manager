@@ -29,7 +29,6 @@ class AlbumController extends Controller
 
     public function update(Request $request, Album $album)
     {
-        // $this->authorize('update', $album);
         $request->validate(['name' => 'required']);
         $album->update($request->all());
         return redirect()->route('albums.index');
@@ -37,7 +36,6 @@ class AlbumController extends Controller
 
     public function destroy(Album $album)
     {
-        // $this->authorize('delete', $album);
         if ($album->photos()->count() > 0) {
             // Provide options to delete or move photos
             return view('albums.confirm-delete', compact('album'));
